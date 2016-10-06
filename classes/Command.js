@@ -10,7 +10,15 @@ var Command = function(keyword, description) {
   this.description = description;
 }
 
-Command.prototype.definition = function(){
+Command.prototype.call = function(){
+  throw new Error("Abstract Method");
+}
+
+Command.prototype.callback = function(){
+  throw new Error("Abstract Method");
+}
+
+Command.prototype.parseRequest = function(){
   throw new Error("Abstract Method");
 }
 
