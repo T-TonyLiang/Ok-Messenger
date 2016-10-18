@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/T-TonyLiang/Personal-Assistant.git"
+    "url": "git+https://github.com/T-TonyLiang/Ok-Messenger.git"
   },
   "author": "Tony Liang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/T-TonyLiang/Personal-Assistant/issues"
+    "url": "https://github.com/T-TonyLiang/Ok-Messenger/issues"
   },
-  "homepage": "https://github.com/T-TonyLiang/Personal-Assistant#readme",
+  "homepage": "https://github.com/T-TonyLiang/Ok-Messenger#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
