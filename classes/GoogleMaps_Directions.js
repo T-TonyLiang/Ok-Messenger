@@ -11,7 +11,6 @@ function ToCommand() {
 
   this.request_hostname = "maps.googleapis.com";
   this.request_path = "/maps/api/directions/json?";
-
 }
 
 ToCommand.prototype = Command.prototype;
