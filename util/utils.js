@@ -3,6 +3,8 @@ var https = require("https");
 var callAPI = function(hostname, path, callback) {
   var response_body = "";
 
+  console.log(hostname+path);
+
   var request = https.get({
     hostname: hostname,
     path: path,
@@ -28,17 +30,17 @@ var callAPI = function(hostname, path, callback) {
 /**
  *  Returns a URL encoded path with specified URL parameter names and values
  *
- * @param path - the base path of the URL
+ * @param base_path - the base path of the URL
  * @param parameters - the JSON object mapping parameter name to parameter value (with null as unspecified)
  * @returns string representing the URL path with the parameters
  */
-var buildPath = function(path, parameters) {
+var buildPath = function(base_path, parameters) {
   for(var param in parameters) {
     parameters[param] = encodeURIComponent(parameters[param]);
   }
   parameters = JSON.stringify(parameters);
   parameters = parameters.replace(/\"|\{|\}/g, "").replace(/:/g,"=").replace(/,/g,"&").replace(/=null/g, "=");
-  return path + parameters;
+  return base_path + parameters;
 }
 
 module.exports = {

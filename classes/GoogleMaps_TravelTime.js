@@ -73,17 +73,11 @@ ToCommand.prototype.callback = function parseResponse(response) {
 
   var steps = response.steps;
   for (var index = 0; index < steps.length; index++){
-    var step = "";
-    switch(response.steps[index].travel_mode){
-      case "DRIVING": step += "Drive "; break;
-      case "WALKING": step += "Walk "; break;
-      default: step += response.steps[index].travel_mode;
-    }
-    step += steps[index].distance.text + " for " + steps[index].duration.text + "\n";
+    var step = "Distance: " + steps[index].distance.text + " in " + steps[index].duration.text + "\n";
     step += striptags(steps[index].html_instructions);
     console.log(step)
   }
 }
 
 var x = new ToCommand();
-x.call("asdf", "8 castlemere cres to davis center, waterloo: by transit arriving 18:30");
+x.call("asdf", "8 castlemere cres to davis center, waterloo: by transit");

@@ -6,7 +6,7 @@ var authToken = config.TWILIO_AUTH;
 
 var client = new twilio.RestClient(accountSid, authToken);
 
-function sendMessage(message, number)
+function sendSMS(message, number)
 {
     //create message
     client.messages.create({
@@ -20,5 +20,5 @@ function sendMessage(message, number)
 }
 
 module.exports = {
-  sendMessage: sendMessage
+  sendSMS: sendSMS
 }
