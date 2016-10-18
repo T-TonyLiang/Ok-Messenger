@@ -38,7 +38,6 @@ var buildPath = function(path, parameters) {
   }
   parameters = JSON.stringify(parameters);
   parameters = parameters.replace(/\"|\{|\}/g, "").replace(/:/g,"=").replace(/,/g,"&").replace(/=null/g, "=");
-  console.log(parameters);
   return path + parameters;
 }
 
