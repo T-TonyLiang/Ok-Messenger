@@ -3,6 +3,8 @@ const API_KEY = require("../config.json").GOOGLE_API_KEY;
 var Command = require("./Command.js");
 var googleapi_utils = require("../util/googleapis.js");
 var utils = require("../util/utils.js");
+var twilio = require("../util/twilio.js")
+var striptags = require('striptags');
 
 function ToCommand() {
   Command.call(this, "time", "");
@@ -65,9 +67,23 @@ ToCommand.prototype.call = function(request_number, request) {
   utils.callAPI(this.request_hostname, path, this.callback);
 }
 
-ToCommand.prototype.callback = function(response) {
-  console.log(response);
+ToCommand.prototype.callback = function parseResponse(response) {
+  response = (JSON.parse(response)).routes[0].legs[0];
+  console.log("Directions from " + response.start_address + " to " + response.end_address + "\nEstimated time: " + response.duration.text);
+
+  var steps = response.steps;
+  for (var index = 0; index < steps.length; index++){
+    var step = "";
+    switch(response.steps[index].travel_mode){
+      case "DRIVING": step += "Drive "; break;
+      case "WALKING": step += "Walk "; break;
+      default: step += response.steps[index].travel_mode;
+    }
+    step += steps[index].distance.text + " for " + steps[index].duration.text + "\n";
+    step += striptags(steps[index].html_instructions);
+    console.log(step)
+  }
 }
 
 var x = new ToCommand();
-x.call("asdf", "8 castlemere cres to davis center, waterloo: by car arriving 18:30");
+x.call("asdf", "8 castlemere cres to davis center, waterloo: by transit arriving 18:30");
