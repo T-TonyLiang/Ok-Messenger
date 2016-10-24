@@ -11,6 +11,7 @@ function ToCommand() {
 
   this.request_hostname = "maps.googleapis.com";
   this.request_path = "/maps/api/directions/json?";
+  this.request_number = "";
 }
 
 ToCommand.prototype = Command.prototype;
@@ -61,21 +62,29 @@ ToCommand.prototype.parseRequest = function(string){
 }
 
 ToCommand.prototype.call = function(request_number, request) {
+  this.request_number = request_number;
   var parameters = this.parseRequest(request);
   var path = utils.buildPath(this.request_path, parameters);
   utils.callAPI(this.request_hostname, path, this.callback);
 }
 
-ToCommand.prototype.callback = function parseResponse(response) {
+ToCommand.prototype.callback = function(response) {
+  var response_messages = this.parseResponse(response);
+  utils.sendResponse(response);
+}
+
+ToCommand.prototype.parseResponse = function(response) {
+  var response_messages = new Array();
   response = (JSON.parse(response)).routes[0].legs[0];
-  console.log("Directions from " + response.start_address + " to " + response.end_address + "\nEstimated time: " + response.duration.text);
+  response_messages.push("Directions from " + response.start_address + " to " + response.end_address + "\nEstimated time: " + response.duration.text);
 
   var steps = response.steps;
   for (var index = 0; index < steps.length; index++){
     var step = "Distance: " + steps[index].distance.text + " in " + steps[index].duration.text + "\n";
     step += striptags(steps[index].html_instructions);
-    console.log(step)
+    response_messages.push(step);
   }
+  return response_messages;
 }
 
 var x = new ToCommand();
