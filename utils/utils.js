@@ -2,6 +2,7 @@
  * Helper and utility functions
  */
 
+var Exception = require("../includes/exceptions.js");
 var https = require("https");
 var twilio = require("./twilio.js");
 
@@ -21,7 +22,7 @@ var callAPI = function(hostname, path, callback) {
     method: 'GET'
   }, function(res) {
     if (res.statusCode !== 200){
-      return;
+      throw new Exception.UnrecognizedInput("Invalid query. Missing required parameters.");
     }
     res.setEncoding('utf8');
     res.on('data', function (data) {
