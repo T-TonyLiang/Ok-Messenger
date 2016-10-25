@@ -1,9 +1,19 @@
-var https = require("https");
+/**
+ * Helper and utility functions
+ */
 
+var https = require("https");
+var twilio = require("./twilio.js");
+
+/*
+ * Sends an HTTP GET request to a given hostname and path, then calls the callback function
+ *
+ * @param hostname the hostname of the HTTP address
+ * @param path the path of the URL address to be requested
+ * @param callback the callback function that will be called and passed the response of the HTTP request
+ */
 var callAPI = function(hostname, path, callback) {
   var response_body = "";
-
-  console.log(hostname+path);
 
   var request = https.get({
     hostname: hostname,
@@ -27,7 +37,20 @@ var callAPI = function(hostname, path, callback) {
   });
 }
 
-/**
+/*
+ * Sends an array of response messages to a phone number via twilio SMS
+ *
+ * @param number the phone number which the messages will be sent to
+ * @param response an array of strings representing the messages to be sent to the phone number
+ */
+var sendResponse = function(number, response) {
+  if (response.constructor !== Array) return;
+  response.forEach(function(element, index, array) {
+    console.log(element);
+  });
+}
+
+/*
  *  Returns a URL encoded path with specified URL parameter names and values
  *
  * @param base_path - the base path of the URL
@@ -43,7 +66,11 @@ var buildPath = function(base_path, parameters) {
   return base_path + parameters;
 }
 
+/**
+ * Exports
+ */
 module.exports = {
   callAPI: callAPI,
-  buildPath: buildPath
+  buildPath: buildPath,
+  sendResponse: sendResponse
 }

@@ -29,6 +29,9 @@ function sendSMS(message, number)
     });
 }
 
+/**
+ * Exports
+ */
 module.exports = {
   sendSMS: sendSMS
 }

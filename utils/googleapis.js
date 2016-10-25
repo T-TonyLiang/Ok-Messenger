@@ -1,6 +1,4 @@
-/**
- * HELPER FUNCTIONS
- */
+
 var replaceSpaceToPlus = function(query) {
   return query.replace(" ", "+");
 }
