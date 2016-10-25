@@ -133,3 +133,5 @@ ToCommand.prototype.callback = function(response) {
   var response_messages = this.parseResponse(response);
   utils.sendResponse(this.request_number, response_messages); // change to prototype
 }
+
+module.exports = ToCommand;

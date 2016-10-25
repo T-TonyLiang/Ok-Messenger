@@ -4,6 +4,7 @@ var twilio = require('./util/twilio.js');
 
 var express = require('express');
 var bodyParser = require("body-parser");
+var ToCommand = require("./classes/GoogleMaps_Directions.js");
 
 var app = express();
 app.use(bodyParser.json());
@@ -12,8 +13,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.post('/', function (request, response) {
-    console.log(request.body);
-    twilio.sendMessage("Hello World", "+16475183093");
+    var command = new ToCommand();
+    command.call(request.body.From, request.body.Body);
 });
 
 var server = app.listen(8080, function() {
