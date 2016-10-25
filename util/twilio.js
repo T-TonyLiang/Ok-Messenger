@@ -1,3 +1,7 @@
+/**
+ * Wrapper for Twilio utilities
+ */
+
 var twilio = require('../node_modules/twilio/lib');
 var config = require('../config.json');
 
@@ -6,6 +10,12 @@ var authToken = config.TWILIO_AUTH;
 
 var client = new twilio.RestClient(accountSid, authToken);
 
+/*
+ * Sends an SMS given the message and the number to be sent to
+ *
+ * @param message the message to be sent to the phone number
+ * @param the phone number
+ */
 function sendSMS(message, number)
 {
     //create message
