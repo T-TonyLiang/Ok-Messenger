@@ -1,22 +1,39 @@
+/**
+ * Google Maps Directions.
+ * Returns the directions from a given address to a given address.
+ */
+
 const API_KEY = require("../config.json").GOOGLE_API_KEY;
 
-var Command = require("./Command.js");
-var googleapi_utils = require("../util/googleapis.js");
-var utils = require("../util/utils.js");
-var twilio = require("../util/twilio.js")
+var OM_Command = require("./00_Command.js");
+var Exception = require("../includes/exceptions.js");
+var googleapi_utils = require("../utils/googleapis.js");
+var utils = require("../utils/utils.js");
+var twilio = require("../utils/twilio.js")
 var striptags = require('striptags');
 
+/*
+ * Constructs a Google Maps Directions command
+ */
 function ToCommand() {
-  Command.call(this, "time", "");
+  OM_Command.call(this, "directions", "returns directions from a given current location to a given destination");
 
   this.request_hostname = "maps.googleapis.com";
   this.request_path = "/maps/api/directions/json?";
   this.request_number = "";
 }
 
-ToCommand.prototype = Command.prototype;
+// inhert from base Command object
+ToCommand.prototype = OM_Command.prototype;
+// initialize constructor
 ToCommand.prototype.constructor = ToCommand;
 
+/*
+ * Given the input query string, parses the request into URL parameters for Google APIS
+ *
+ * @returns a JSON object mapping the URL parameter name to parameter value
+ * @throws InvalidCommandException
+ */
 ToCommand.prototype.parseRequest = function(string){
   var departure_time = null, arrival_time = null;
 
@@ -45,9 +62,9 @@ ToCommand.prototype.parseRequest = function(string){
   // seperate mapping if the string starts with 'from'
   var arr = string.split(" to ");
   if (arr.length <= 1) {
-    throw new Error("Error, no keyword 'to' found in query.");
+    throw new Exception.InvalidCommand("Error, no keyword 'to' found in query.");
   } else if (arr.length > 2) {
-    throw new Error("Error, multiple keywords 'to' found in query.");
+    throw new Exception.InvalidCommand("Error, multiple keywords 'to' found in query.");
   }
   var origin = arr[0];
   var destination = arr[1];
@@ -61,20 +78,40 @@ ToCommand.prototype.parseRequest = function(string){
   }
 }
 
+/*
+ * Invokes functions to process the request and send SMS response
+ *
+ * @param request_number the phone number number that sent the request
+ * @request the query string
+ */
 ToCommand.prototype.call = function(request_number, request) {
-  this.request_number = request_number;
-  var parameters = this.parseRequest(request);
-  var path = utils.buildPath(this.request_path, parameters);
-  utils.callAPI(this.request_hostname, path, this.callback);
+  try{
+    this.request_number = request_number;
+    var parameters = this.parseRequest(request);
+    var path = utils.buildPath(this.request_path, parameters);
+    utils.callAPI(this.request_hostname, path, this.callback.bind(this));
+  } catch (exception) {
+    if (exception instanceof Exception.OM_Exception) {
+      var arr = new Array(exception.message);
+      utils.sendResponse(request_number, arr);
+    }
+    throw exception;
+  }
 }
 
-ToCommand.prototype.callback = function(response) {
-  var response_messages = this.parseResponse(response);
-  utils.sendResponse(response);
-}
-
+/*
+ * Parses the response from the Google API and returns an array of response messages
+ *
+ * @param response the response data from the API
+ * @returns response_messages the array of response messages
+ * @throws UnrecognizedInputException
+ */
 ToCommand.prototype.parseResponse = function(response) {
   var response_messages = new Array();
+  if(!(JSON.parse(response)).routes[0]) {
+    throw new Exception.UnrecognizedInput("Google was unable to locate the specified address(es).")
+  }
+
   response = (JSON.parse(response)).routes[0].legs[0];
   response_messages.push("Directions from " + response.start_address + " to " + response.end_address + "\nEstimated time: " + response.duration.text);
 
@@ -87,5 +124,12 @@ ToCommand.prototype.parseResponse = function(response) {
   return response_messages;
 }
 
-var x = new ToCommand();
-x.call("asdf", "8 castlemere cres to davis center, waterloo: by transit");
+/*
+ * Callback method of API calls. Invokes functions to parse response from API and send it via SMS
+ *
+ * @param response the response data from the API
+ */
+ToCommand.prototype.callback = function(response) {
+  var response_messages = this.parseResponse(response);
+  utils.sendResponse(this.request_number, response_messages); // change to prototype
+}

@@ -14,17 +14,8 @@ var OM_Command = function(keyword, description) {
 }
 
 OM_Command.prototype.call = function(child_call){
-  if (child_call === undefined) {
-    throw new Error("Undefined call method parameter");
-  }
-  try {
-    child_call();
-  } catch(err) {
-    if (err instanceof Exception.OM_Exception) {
-      var arr = new Array(err.message);
-      utils.sendResponse(arr);
-    }
-  }
+  throw new Error("Abstract Method");
+
 }
 
 OM_Command.prototype.callback = function(){
